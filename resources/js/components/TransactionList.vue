@@ -27,6 +27,14 @@
       <template v-slot:item.amount="{ item }">
          {{ formatMoney(item.amount) }}
       </template>
+      <template v-slot:item.actions="{ item }">
+        <v-icon size="small" class="me-2" @click="editItem(item)">
+          mdi-pencil
+        </v-icon>
+        <v-icon size="small" @click="deleteItem(item)">
+          mdi-delete
+        </v-icon>
+      </template>
     </v-data-table-server>
   </v-card>
 </template>
@@ -40,10 +48,11 @@ const { mobile } = useDisplay();
 
 const itemsPerPage = ref(10);
 const headers = [
-  { title: 'Fecha', key: 'date', align: 'start' },
+  { title: 'Fecha', key: 'date', align: 'start', width: '100px', cellProps: { class: 'text-no-wrap' } },
   { title: 'Descripción', key: 'description', align: 'start' },
   { title: 'Tipo', key: 'type', align: 'start' },
-  { title: 'Monto', key: 'amount', align: 'end' },
+  { title: 'Monto', key: 'amount', align: 'end', cellProps: { class: 'text-no-wrap font-weight-bold' } },
+  { title: 'Acciones', key: 'actions', sortable: false, align: 'end' },
 ];
 const serverItems = ref([]);
 const loading = ref(true);
@@ -54,6 +63,8 @@ const props = defineProps({
   year: Number,
   month: Number
 });
+
+const emit = defineEmits(['edit', 'deleted']);
 
 const loadItems = async (options = {}) => {
   const { page, itemsPerPage, sortBy } = options;
@@ -78,7 +89,7 @@ const loadItems = async (options = {}) => {
   }
 };
 
-// Watch props to reload
+// ... watch ...
 import { watch } from 'vue';
 watch(() => [props.year, props.month], () => {
     loadItems({ page: 1 });
@@ -104,6 +115,23 @@ const formatDate = (dateString) => {
     const formattedMonth = month.charAt(0).toUpperCase() + month.slice(1);
 
     return `${day}-${formattedMonth}-${year}`;
+};
+
+const editItem = (item) => {
+    emit('edit', item);
+};
+
+const deleteItem = async (item) => {
+    if (!confirm('¿Estás seguro de eliminar este movimiento?')) return;
+
+    try {
+        await axios.delete(`/api/transactions/${item.id}`);
+        emit('deleted');
+        loadItems({ page: 1 }); // Refresh list
+    } catch (e) {
+        console.error(e);
+        alert('Error al eliminar');
+    }
 };
 
 // Expose reload function

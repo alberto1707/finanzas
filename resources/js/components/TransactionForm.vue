@@ -1,10 +1,6 @@
 <template>
   <v-dialog v-model="dialog" max-width="500px" :fullscreen="mobile">
-    <template v-slot:activator="{ props }">
-      <v-btn color="primary" dark v-bind="props" class="mb-2">
-        Nuevo Movimiento
-      </v-btn>
-    </template>
+    <!-- Activator removed, controlled via expose -->
     <v-card>
       <v-card-title>
         <span class="text-h5">{{ formTitle }}</span>
@@ -93,6 +89,18 @@ const formTitle = computed(() => {
   return editedIndex.value === -1 ? 'Nuevo Movimiento' : 'Editar Movimiento';
 });
 
+// Expose open method for parent
+const open = (item = null) => {
+    if (item) {
+        editedItem.value = { ...item }; // Clone item
+        editedIndex.value = item.id; // Use ID to track edit mode
+    } else {
+        editedItem.value = Object.assign({}, defaultItem);
+        editedIndex.value = -1;
+    }
+    dialog.value = true;
+};
+
 watch(dialog, (val) => {
   if (!val) {
     close();
@@ -101,8 +109,10 @@ watch(dialog, (val) => {
 
 const close = () => {
     dialog.value = false;
-    editedItem.value = Object.assign({}, defaultItem);
-    editedIndex.value = -1;
+    setTimeout(() => {
+        editedItem.value = Object.assign({}, defaultItem);
+        editedIndex.value = -1;
+    }, 300); // Delay clear to allow closing animation
 };
 
 const save = async () => {
@@ -113,10 +123,10 @@ const save = async () => {
         };
 
         if (editedIndex.value > -1) {
-            // Update logic if we pass ID
-             // Not implemented fully in this snippet, assumes create for now or handled by parent logic?
-             // Actually, letting this component handle API call:
+             // Edit mode
+             await axios.put(`/api/transactions/${editedIndex.value}`, payload);
         } else {
+             // Create mode
              await axios.post('/api/transactions', payload);
         }
 
@@ -127,4 +137,6 @@ const save = async () => {
         alert('Error al guardar');
     }
 };
+
+defineExpose({ open });
 </script>

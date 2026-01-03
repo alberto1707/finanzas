@@ -71,7 +71,10 @@
                <v-btn value="monthly">Mes</v-btn>
                <v-btn value="daily">Día</v-btn>
             </v-btn-toggle>
-            <TransactionForm @saved="refreshData" />
+            <v-btn color="primary" @click="openNewTransaction" density="compact" class="ml-2">
+                Nuevo
+            </v-btn>
+            <TransactionForm ref="formRef" @saved="refreshData" />
           </v-card-title>
           <v-expand-transition>
             <v-card-text v-if="loaded && showChart">
@@ -84,7 +87,7 @@
 
     <v-row class="mt-4">
       <v-col cols="12">
-        <TransactionList ref="listRef" :year="selectedYear" :month="selectedMonth" />
+        <TransactionList ref="listRef" :year="selectedYear" :month="selectedMonth" @edit="openEditTransaction" @deleted="refreshData" />
         <v-btn color="error" class="mt-4" @click="logout" size="small">Cerrar Sesión</v-btn>
       </v-col>
     </v-row>
@@ -108,6 +111,13 @@ const router = useRouter();
 const balanceData = ref({ total_income: 0, total_expense: 0, balance: 0, chart_data: [] });
 const loaded = ref(false);
 const listRef = ref(null);
+// const formRef defined below near usage, but let's consolidate if cleaner,
+// actually I added it in the previous block. Wait, I added it inside the function block?
+// No, I added 'const formRef = ref(null);' in the previous block I wrote.
+// But to be safe, let's make sure it's valid scope.
+// Ah, previous block replaced 'toggleViewMode'.
+// It is better to have refs at top. I will remove it from there and put it here.
+const formRef = ref(null);
 const viewMode = ref('monthly'); // 'monthly' or 'daily'
 const showChart = ref(!mobile.value);
 
@@ -233,6 +243,14 @@ const refreshData = () => {
 
 const updateFilters = () => {
     refreshData();
+};
+
+const openNewTransaction = () => {
+    formRef.value.open();
+};
+
+const openEditTransaction = (item) => {
+    formRef.value.open(item);
 };
 
 const toggleViewMode = () => {
