@@ -25,10 +25,14 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-CrQpmTmb.js",
+    "file": "assets/app-BtYwqK-H.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
+    "dynamicImports": [
+      "resources/js/layouts/MainLayout.vue",
+      "resources/js/pages/Statistics.vue"
+    ],
     "css": [
       "assets/app-CUMTQzJP.css"
     ],
@@ -37,6 +41,27 @@
       "assets/materialdesignicons-webfont-Dp5v-WZN.woff2",
       "assets/materialdesignicons-webfont-PXm3-2wK.woff",
       "assets/materialdesignicons-webfont-B7mPwVP_.ttf"
+    ]
+  },
+  "resources/js/layouts/MainLayout.vue": {
+    "file": "assets/MainLayout-DvwcPd3D.js",
+    "name": "MainLayout",
+    "src": "resources/js/layouts/MainLayout.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "css": [
+      "assets/MainLayout-ByyId683.css"
+    ]
+  },
+  "resources/js/pages/Statistics.vue": {
+    "file": "assets/Statistics-CNxbceG3.js",
+    "name": "Statistics",
+    "src": "resources/js/pages/Statistics.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
     ]
   }
 }
