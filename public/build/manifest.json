@@ -1,4 +1,11 @@
 {
+  "_layout-BknakFXR.js": {
+    "file": "assets/layout-BknakFXR.js",
+    "name": "layout",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
   "node_modules/@mdi/font/fonts/materialdesignicons-webfont.eot": {
     "file": "assets/materialdesignicons-webfont-CSr8KVlo.eot",
     "src": "node_modules/@mdi/font/fonts/materialdesignicons-webfont.eot"
@@ -25,16 +32,17 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-BtYwqK-H.js",
+    "file": "assets/app-DZQO3G3w.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "dynamicImports": [
       "resources/js/layouts/MainLayout.vue",
-      "resources/js/pages/Statistics.vue"
+      "resources/js/pages/Statistics.vue",
+      "resources/js/pages/Profile.vue"
     ],
     "css": [
-      "assets/app-CUMTQzJP.css"
+      "assets/app-DqEkHjmA.css"
     ],
     "assets": [
       "assets/materialdesignicons-webfont-CSr8KVlo.eot",
@@ -44,19 +52,33 @@
     ]
   },
   "resources/js/layouts/MainLayout.vue": {
-    "file": "assets/MainLayout-DvwcPd3D.js",
+    "file": "assets/MainLayout-CQdUTakP.js",
     "name": "MainLayout",
     "src": "resources/js/layouts/MainLayout.vue",
     "isDynamicEntry": true,
     "imports": [
-      "resources/js/app.js"
+      "resources/js/app.js",
+      "_layout-BknakFXR.js"
     ],
     "css": [
-      "assets/MainLayout-ByyId683.css"
+      "assets/MainLayout-B1FNfYHe.css"
+    ]
+  },
+  "resources/js/pages/Profile.vue": {
+    "file": "assets/Profile-OpecJLhe.js",
+    "name": "Profile",
+    "src": "resources/js/pages/Profile.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js",
+      "_layout-BknakFXR.js"
+    ],
+    "css": [
+      "assets/Profile-BqUiYHL6.css"
     ]
   },
   "resources/js/pages/Statistics.vue": {
-    "file": "assets/Statistics-CNxbceG3.js",
+    "file": "assets/Statistics-CHg-Tx8y.js",
     "name": "Statistics",
     "src": "resources/js/pages/Statistics.vue",
     "isDynamicEntry": true,
