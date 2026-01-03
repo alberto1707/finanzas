@@ -27,27 +27,48 @@
         </v-col>
     </v-row>
     <v-row dense>
-      <v-col cols="4" md="4">
-        <v-card color="green-lighten-4" height="100%">
-          <v-card-title :class="mobile ? 'text-caption px-2' : ''">Ingresos</v-card-title>
-          <v-card-text :class="mobile ? 'text-body-2 font-weight-bold px-2' : 'text-h4'" class="text-green-darken-4">
-            {{ formatMoney(balanceData.total_income) }}
+      <v-col cols="12" md="4">
+        <v-card color="green-lighten-4" height="100%" elevation="2">
+          <v-card-text class="d-flex align-center">
+            <v-avatar color="green-darken-1" size="48" class="mr-3">
+              <v-icon color="white">mdi-trending-up</v-icon>
+            </v-avatar>
+            <div>
+              <div class="text-caption text-green-darken-4">Ingresos</div>
+              <div :class="mobile ? 'text-h6' : 'text-h5'" class="text-green-darken-4 font-weight-bold">
+                {{ formatMoney(balanceData.total_income) }}
+              </div>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="4" md="4">
-        <v-card color="red-lighten-4" height="100%">
-          <v-card-title :class="mobile ? 'text-caption px-2' : ''">Egresos</v-card-title>
-          <v-card-text :class="mobile ? 'text-body-2 font-weight-bold px-2' : 'text-h4'" class="text-red-darken-4">
-            {{ formatMoney(balanceData.total_expense) }}
+      <v-col cols="12" md="4">
+        <v-card color="red-lighten-4" height="100%" elevation="2">
+          <v-card-text class="d-flex align-center">
+            <v-avatar color="red-darken-1" size="48" class="mr-3">
+              <v-icon color="white">mdi-trending-down</v-icon>
+            </v-avatar>
+            <div>
+              <div class="text-caption text-red-darken-4">Egresos</div>
+              <div :class="mobile ? 'text-h6' : 'text-h5'" class="text-red-darken-4 font-weight-bold">
+                {{ formatMoney(balanceData.total_expense) }}
+              </div>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="4" md="4">
-        <v-card color="blue-lighten-4" height="100%">
-          <v-card-title :class="mobile ? 'text-caption px-2' : ''">Balance</v-card-title>
-          <v-card-text :class="mobile ? 'text-body-2 font-weight-bold px-2' : 'text-h4'" class="text-blue-darken-4">
-            {{ formatMoney(balanceData.balance) }}
+      <v-col cols="12" md="4">
+        <v-card color="blue-lighten-4" height="100%" elevation="2">
+          <v-card-text class="d-flex align-center">
+            <v-avatar color="blue-darken-1" size="48" class="mr-3">
+              <v-icon color="white">mdi-wallet</v-icon>
+            </v-avatar>
+            <div>
+              <div class="text-caption text-blue-darken-4">Balance</div>
+              <div :class="mobile ? 'text-h6' : 'text-h5'" class="text-blue-darken-4 font-weight-bold">
+                {{ formatMoney(balanceData.balance) }}
+              </div>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -58,7 +79,8 @@
     <v-row class="mt-4">
       <v-col cols="12">
          <div class="d-flex align-center mb-2">
-            <v-btn color="primary" @click="openNewTransaction" density="compact" class="mr-2">
+            <v-btn color="primary" @click="openNewTransaction" class="mr-2" elevation="2">
+                <v-icon start>mdi-plus</v-icon>
                 Nuevo
             </v-btn>
             <v-spacer></v-spacer>

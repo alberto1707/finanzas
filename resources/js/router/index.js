@@ -1,35 +1,40 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import Login from '../pages/Login.vue';
-import Register from '../pages/Register.vue';
-import Dashboard from '../pages/Dashboard.vue';
+import { createRouter, createWebHistory } from "vue-router";
+import Login from "../pages/Login.vue";
+import Register from "../pages/Register.vue";
+import Dashboard from "../pages/Dashboard.vue";
 
 const routes = [
     {
-        path: '/login',
-        name: 'Login',
+        path: "/login",
+        name: "Login",
         component: Login,
     },
     {
-        path: '/register',
-        name: 'Register',
+        path: "/register",
+        name: "Register",
         component: Register,
     },
     {
-        path: '/',
-        component: () => import('../layouts/MainLayout.vue'),
+        path: "/",
+        component: () => import("../layouts/MainLayout.vue"),
         meta: { requiresAuth: true },
         children: [
             {
-                path: '',
-                name: 'Dashboard',
+                path: "",
+                name: "Dashboard",
                 component: Dashboard,
             },
             {
-                path: 'stats',
-                name: 'Statistics',
-                component: () => import('../pages/Statistics.vue'),
-            }
-        ]
+                path: "stats",
+                name: "Statistics",
+                component: () => import("../pages/Statistics.vue"),
+            },
+            {
+                path: "profile",
+                name: "Profile",
+                component: () => import("../pages/Profile.vue"),
+            },
+        ],
     },
 ];
 
@@ -39,12 +44,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = !!localStorage.getItem('token');
+    const isAuthenticated = !!localStorage.getItem("token");
 
     if (to.meta.requiresAuth && !isAuthenticated) {
-        next('/login');
-    } else if (to.name === 'Login' && isAuthenticated) {
-        next('/');
+        next("/login");
+    } else if (to.name === "Login" && isAuthenticated) {
+        next("/");
     } else {
         next();
     }
