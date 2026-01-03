@@ -16,9 +16,20 @@ const routes = [
     },
     {
         path: '/',
-        name: 'Dashboard',
-        component: Dashboard,
+        component: () => import('../layouts/MainLayout.vue'),
         meta: { requiresAuth: true },
+        children: [
+            {
+                path: '',
+                name: 'Dashboard',
+                component: Dashboard,
+            },
+            {
+                path: 'stats',
+                name: 'Statistics',
+                component: () => import('../pages/Statistics.vue'),
+            }
+        ]
     },
 ];
 

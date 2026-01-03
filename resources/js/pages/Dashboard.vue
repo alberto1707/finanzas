@@ -17,6 +17,8 @@
             <v-select
                 v-model="selectedYear"
                 :items="years"
+                item-title="title"
+                item-value="value"
                 label="Año"
                 density="compact"
                 hide-details
@@ -51,44 +53,23 @@
       </v-col>
     </v-row>
 
+    <!-- Chart section removed -->
+
     <v-row class="mt-4">
       <v-col cols="12">
-        <v-card>
-          <v-card-title>
-            Comportamiento {{ viewMode === 'monthly' ? 'Mensual' : 'Diario' }}
-            <v-spacer></v-spacer>
-            <v-btn
-                v-if="mobile"
-                icon
-                variant="text"
-                density="compact"
-                class="mr-2"
-                @click="showChart = !showChart"
-            >
-                <v-icon>{{ showChart ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-            </v-btn>
-            <v-btn-toggle v-if="showChart || !mobile" v-model="viewMode" mandatory class="mr-2" density="compact" @update:modelValue="loadBalance">
-               <v-btn value="monthly">Mes</v-btn>
-               <v-btn value="daily">Día</v-btn>
-            </v-btn-toggle>
-            <v-btn color="primary" @click="openNewTransaction" density="compact" class="ml-2">
+         <div class="d-flex align-center mb-2">
+            <v-btn color="primary" @click="openNewTransaction" density="compact" class="mr-2">
                 Nuevo
             </v-btn>
-            <TransactionForm ref="formRef" @saved="refreshData" />
-          </v-card-title>
-          <v-expand-transition>
-            <v-card-text v-if="loaded && showChart">
-                 <Line :data="chartData" :options="chartOptions" style="height: 300px"/>
-            </v-card-text>
-          </v-expand-transition>
-        </v-card>
+            <v-spacer></v-spacer>
+        </div>
+        <TransactionForm ref="formRef" @saved="refreshData" />
       </v-col>
     </v-row>
 
     <v-row class="mt-4">
       <v-col cols="12">
         <TransactionList ref="listRef" :year="selectedYear" :month="selectedMonth" @edit="openEditTransaction" @deleted="refreshData" />
-        <v-btn color="error" class="mt-4" @click="logout" size="small">Cerrar Sesión</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -101,15 +82,38 @@ import { useDisplay } from 'vuetify';
 import axios from 'axios';
 import TransactionForm from '../components/TransactionForm.vue';
 import TransactionList from '../components/TransactionList.vue';
-import { Line } from 'vue-chartjs';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+// Chart moved to Statistics.vue
+// import { Line } from 'vue-chartjs';
+// import { Chart as ChartJS... }
 
 const { mobile } = useDisplay();
 const router = useRouter();
 const balanceData = ref({ total_income: 0, total_expense: 0, balance: 0, chart_data: [] });
 const loaded = ref(false);
+const user = ref(null);
+
+onMounted(() => {
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+    if (token) {
+        if(userData) {
+            user.value = JSON.parse(userData);
+        }
+        loadBalance();
+    } else {
+        router.push('/login');
+    }
+});
+
+const userInitials = computed(() => {
+    if (!user.value || !user.value.name) return 'U';
+    const names = user.value.name.split(' ');
+    if (names.length >= 2) {
+        return (names[0][0] + names[1][0]).toUpperCase();
+    }
+    return user.value.name.substring(0, 2).toUpperCase();
+});
 const listRef = ref(null);
 // const formRef defined below near usage, but let's consolidate if cleaner,
 // actually I added it in the previous block. Wait, I added it inside the function block?
@@ -118,8 +122,8 @@ const listRef = ref(null);
 // Ah, previous block replaced 'toggleViewMode'.
 // It is better to have refs at top. I will remove it from there and put it here.
 const formRef = ref(null);
+
 const viewMode = ref('monthly'); // 'monthly' or 'daily'
-const showChart = ref(!mobile.value);
 
 const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth() + 1;
@@ -143,66 +147,9 @@ const months = [
     { title: 'Diciembre', value: 12 },
 ];
 
-watch(mobile, (val) => {
-    showChart.value = !val;
-});
 
-const chartData = computed(() => {
-    // chart_data contains 'label', 'income', 'expense'
-    const labels = balanceData.value.chart_data.map(m => m.label);
-    const income = balanceData.value.chart_data.map(m => m.income);
-    const expense = balanceData.value.chart_data.map(m => m.expense);
 
-    return {
-        labels,
-        datasets: [
-            {
-                label: 'Ingresos',
-                backgroundColor: '#4CAF50',
-                borderColor: '#4CAF50',
-                data: income,
-                fill: false
-            },
-            {
-                label: 'Egresos',
-                backgroundColor: '#F44336',
-                borderColor: '#F44336',
-                data: expense,
-                fill: false
-            }
-        ]
-    };
-});
-
-const chartOptions = computed(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-        x: {
-            ticks: {
-                font: {
-                    size: mobile.value ? 10 : 12
-                }
-            }
-        },
-        y: {
-            ticks: {
-                font: {
-                    size: mobile.value ? 10 : 12
-                }
-            }
-        }
-    },
-    plugins: {
-        legend: {
-            labels: {
-                font: {
-                    size: mobile.value ? 11 : 12
-                }
-            }
-        }
-    }
-}));
+/* Chart logic moved to Statistics.vue */
 
 const loadBalance = async () => {
     try {
@@ -253,19 +200,23 @@ const openEditTransaction = (item) => {
     formRef.value.open(item);
 };
 
-const toggleViewMode = () => {
-    viewMode.value = viewMode.value === 'monthly' ? 'daily' : 'monthly';
-    loadBalance();
-};
+// toggleViewMode moved to logic inside Statistics.vue if needed,
+// or Dashboard keeps it if using viewMode for other things?
+// Dashboard still uses viewMode string in template title? Yes: "Comportamiento {{ viewMode ... }}"
+// Wait, I removed the Chart card title in template, but I might have kept the title "Comportamiento...".
+// Let's check imports. I removed chart section.
+// Ah, I removed the whole card containing the chart.
+// So viewMode is likely not used anymore in Dashboard unless it affects the balance calculation?
+// loadBalance uses viewMode.value.
+// Balance API breakdown logic relies on it.
+// But the Dashboard cards (Income/Expense/Balance) are Totals, which are usually not affected by "Daily/Monthly" breakdown mode in the backend
+// (Totals are controlled by date filters Year/Month).
+// The 'mode' param in backend only affects 'chart_data'.
+// So if Dashboard doesn't show chart, it doesn't need viewMode.
+// I should clean up viewMode too.
 
-onMounted(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        loadBalance();
-    } else {
-        router.push('/login');
-    }
-});
+
+
 
 const logout = async () => {
     try {

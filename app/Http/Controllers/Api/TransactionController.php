@@ -116,11 +116,47 @@ class TransactionController extends Controller
             });
         }
 
+        // Extra Stats Logic
+        $highestExpense = null;
+        $averageDaily = 0;
+
+        if ($request->has('stats')) {
+             $statsQuery = $user->transactions()->where('type', 'expense');
+             if ($request->has('month') && $request->has('year')) {
+                $statsQuery->whereYear('date', $request->year)->whereMonth('date', $request->month);
+            }
+
+            $highestExpense = $statsQuery->orderBy('amount', 'desc')->first();
+
+            // Average Daily
+            // If specific month selected, divide by days in that month (or days passed so far?)
+            // If no filter, maybe average of all time? Let's stick to the filter context.
+            $totalExpenseInPeriod = $expense;
+
+            if ($request->has('month') && $request->has('year')) {
+                $daysInMonth = \Carbon\Carbon::create($request->year, $request->month)->daysInMonth;
+                // If current month, maybe divide by current day? Or just full daysInMonth for projection?
+                // Let's use daysInMonth for simplicity of monthly average budget.
+                $divisor = $daysInMonth;
+            } else {
+                 // If no specific month, maybe last 30 days?
+                 // Or just use 30 as default divisor if global?
+                 // For now, let's assume if no filter, we don't calculate meaningful daily average or use 30.
+                 $divisor = 30;
+            }
+
+            if ($divisor > 0) {
+                $averageDaily = $totalExpenseInPeriod / $divisor;
+            }
+        }
+
         return response()->json([
             'total_income' => $income,
             'total_expense' => $expense,
             'balance' => $income - $expense,
-            'chart_data' => $data
+            'chart_data' => $data,
+            'highest_expense' => $highestExpense ?? null,
+            'average_daily_expense' => $averageDaily ?? 0
         ]);
     }
 }
