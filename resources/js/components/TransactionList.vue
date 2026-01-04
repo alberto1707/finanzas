@@ -1,41 +1,74 @@
 <template>
   <v-card>
-    <v-card-title :class="mobile ? 'text-subtitle-1' : ''">
-      Historial
-      <v-spacer></v-spacer>
-      <!-- We can insert Form component here or just a button that opens it -->
-    </v-card-title>
-    <v-data-table-server
-      v-model:items-per-page="itemsPerPage"
-      :headers="headers"
-      :items="serverItems"
-      :items-length="totalItems"
-      :loading="loading"
-      :search="search"
-      class="elevation-1"
-      :density="mobile ? 'compact' : 'default'"
-      @update:options="loadItems"
-    >
-      <template v-slot:item.date="{ item }">
-        {{ item.formatted_date }}
-      </template>
-      <template v-slot:item.type="{ item }">
-        <v-chip :color="getColor(item.type)">
-          {{ item.type === 'income' ? 'Ingreso' : 'Egreso' }}
-        </v-chip>
-      </template>
-      <template v-slot:item.amount="{ item }">
-         {{ formatMoney(item.amount) }}
-      </template>
-      <template v-slot:item.actions="{ item }">
-        <v-icon size="small" class="me-2" @click="editItem(item)">
-          mdi-pencil
-        </v-icon>
-        <v-icon size="small" @click="deleteItem(item)">
-          mdi-delete
-        </v-icon>
-      </template>
-    </v-data-table-server>
+    <v-card-text>
+        <v-row dense class="mb-2">
+            <v-col cols="12" md="8">
+                <v-text-field
+                    v-model="search"
+                    prepend-inner-icon="mdi-magnify"
+                    label="Buscar descripción..."
+                    variant="outlined"
+                    density="compact"
+                    hide-details
+                    clearable
+                    @click:clear="loadItems({ page: 1 })"
+                    @keyup.enter="loadItems({ page: 1 })"
+                ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="4">
+                <v-select
+                    v-model="typeFilter"
+                    :items="typeOptions"
+                    item-title="title"
+                    item-value="value"
+                    label="Tipo"
+                    variant="outlined"
+                    density="compact"
+                    hide-details
+                    @update:modelValue="loadItems({ page: 1 })"
+                ></v-select>
+            </v-col>
+        </v-row>
+
+        <v-data-table-server
+            v-model:items-per-page="itemsPerPage"
+            :headers="headers"
+            :items="serverItems"
+            :items-length="totalItems"
+            :loading="loading"
+            class="elevation-0"
+            :density="mobile ? 'compact' : 'default'"
+            :items-per-page-options="[5, 10, 25]"
+            @update:options="loadItems"
+        >
+            <!-- Group Header Style (Manual grouping visual) -->
+            <template v-slot:item.date="{ item, index }">
+                <span :class="isNewDay(item, index) ? 'font-weight-bold text-primary' : 'text-grey-lighten-1'">
+                    {{ item.formatted_date }}
+                </span>
+            </template>
+
+            <template v-slot:item.type="{ item }">
+                <v-icon :color="getColor(item.type)" size="small" class="mr-1">
+                    {{ item.type === 'income' ? 'mdi-arrow-up-circle' : 'mdi-arrow-down-circle' }}
+                </v-icon>
+                <span :class="`text-${getColor(item.type)}`" class="text-caption font-weight-bold">
+                    {{ item.type === 'income' ? 'Ingreso' : 'Egreso' }}
+                </span>
+            </template>
+
+            <template v-slot:item.amount="{ item }">
+                <span :class="item.type === 'income' ? 'text-green-darken-2' : 'text-red-darken-2'" class="font-weight-bold">
+                    {{ item.type === 'income' ? '+' : '-' }} {{ formatMoney(item.amount) }}
+                </span>
+            </template>
+
+            <template v-slot:item.actions="{ item }">
+                <v-btn icon="mdi-pencil" variant="text" size="small" color="blue" @click="editItem(item)"></v-btn>
+                <v-btn icon="mdi-delete" variant="text" size="small" color="red" @click="deleteItem(item)"></v-btn>
+            </template>
+        </v-data-table-server>
+    </v-card-text>
   </v-card>
 </template>
 
@@ -58,6 +91,12 @@ const serverItems = ref([]);
 const loading = ref(true);
 const totalItems = ref(0);
 const search = ref('');
+const typeFilter = ref('');
+const typeOptions = [
+    { title: 'Todos', value: '' },
+    { title: 'Ingresos', value: 'income' },
+    { title: 'Egresos', value: 'expense' },
+];
 
 const props = defineProps({
   year: Number,
@@ -69,10 +108,10 @@ const emit = defineEmits(['edit', 'deleted']);
 const loadItems = async (options = {}) => {
   const { page, itemsPerPage, sortBy } = options;
 
-  // Use props directly
   const params = {
       page: page || 1,
-      type: search.value,
+      search: search.value,
+      type: typeFilter.value,
       year: props.year,
       month: props.month
   };
@@ -87,6 +126,11 @@ const loadItems = async (options = {}) => {
   } finally {
     loading.value = false;
   }
+};
+
+const isNewDay = (item, index) => {
+    if (index === 0) return true;
+    return serverItems.value[index - 1].date !== item.date;
 };
 
 // ... watch ...

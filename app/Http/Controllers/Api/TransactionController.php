@@ -22,6 +22,10 @@ class TransactionController extends Controller
                   ->whereMonth('date', $request->month);
         }
 
+        if ($request->filled('search')) {
+            $query->where('description', 'like', '%' . $request->search . '%');
+        }
+
         return $query->paginate(10);
     }
 
