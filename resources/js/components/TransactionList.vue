@@ -17,7 +17,7 @@
       @update:options="loadItems"
     >
       <template v-slot:item.date="{ item }">
-        {{ formatDate(item.date) }}
+        {{ item.formatted_date }}
       </template>
       <template v-slot:item.type="{ item }">
         <v-chip :color="getColor(item.type)">
@@ -103,19 +103,7 @@ const formatMoney = (value) => {
     return '$ ' + parseFloat(value).toFixed(2);
 };
 
-const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    // Format: d-MMM-Y (e.g., 02-Ene-2026)
-    // We can use Intl.DateTimeFormat
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = date.toLocaleDateString('es-ES', { month: 'short' });
-    const year = date.getFullYear();
-    // Capitalize first letter of month
-    const formattedMonth = month.charAt(0).toUpperCase() + month.slice(1);
 
-    return `${day}-${formattedMonth}-${year}`;
-};
 
 const editItem = (item) => {
     emit('edit', item);

@@ -1,6 +1,6 @@
 {
-  "_layout-BknakFXR.js": {
-    "file": "assets/layout-BknakFXR.js",
+  "_layout-DYTwUSDa.js": {
+    "file": "assets/layout-DYTwUSDa.js",
     "name": "layout",
     "imports": [
       "resources/js/app.js"
@@ -32,7 +32,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-DZQO3G3w.js",
+    "file": "assets/app-Ci9VaRBz.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -52,33 +52,33 @@
     ]
   },
   "resources/js/layouts/MainLayout.vue": {
-    "file": "assets/MainLayout-CQdUTakP.js",
+    "file": "assets/MainLayout-D-SbF4XX.js",
     "name": "MainLayout",
     "src": "resources/js/layouts/MainLayout.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_layout-BknakFXR.js"
+      "_layout-DYTwUSDa.js"
     ],
     "css": [
       "assets/MainLayout-B1FNfYHe.css"
     ]
   },
   "resources/js/pages/Profile.vue": {
-    "file": "assets/Profile-OpecJLhe.js",
+    "file": "assets/Profile-BWvgr8AV.js",
     "name": "Profile",
     "src": "resources/js/pages/Profile.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_layout-BknakFXR.js"
+      "_layout-DYTwUSDa.js"
     ],
     "css": [
       "assets/Profile-BqUiYHL6.css"
     ]
   },
   "resources/js/pages/Statistics.vue": {
-    "file": "assets/Statistics-CHg-Tx8y.js",
+    "file": "assets/Statistics-BV_394fd.js",
     "name": "Statistics",
     "src": "resources/js/pages/Statistics.vue",
     "isDynamicEntry": true,

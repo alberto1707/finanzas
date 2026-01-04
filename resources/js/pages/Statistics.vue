@@ -48,7 +48,7 @@
                             {{ formatMoney(stats.highest_expense.amount) }}
                         </div>
                         <div class="text-caption">{{ stats.highest_expense.description }}</div>
-                        <div class="text-caption">{{ formatDate(stats.highest_expense.date) }}</div>
+                        <div class="text-caption">{{ stats.highest_expense.formatted_date }}</div>
                     </div>
                     <div v-else class="text-caption text-grey">Sin datos</div>
                 </v-card-text>
